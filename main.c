@@ -13,25 +13,23 @@ const double dx = 0.1, dy = 0.1, dz = 0.1, dt = 0.01;
 const double max_t = 20;
 const double s = (k * dt)/(dx*dx);
 const int Nx = L / dx + 1, Ny = W / dy + 1, Nz = H / dz + 1, Nt = max_t / dt + 1;
-double T[Nt][Nx][Ny][Nz];
-
+double T[2][Nx][Ny][Nz];
 
 double T_start = 0;
 
 void Initalizing()
 {
-    int t = 0;
-    for (int j = 0; j < Nx; j++)
-        for (int k = 0; k < Ny; k++)
-            for (int l = 0; l <Nz; l++)
-                T[t][j][k][l] = T_start;
+    for (int i = 0; i < Nx; i++)
+        for (int j = 0; j < Ny; j++)
+            for (int k = 0; k < Nz; k++)
+                T[0][i][j][k] = T_start;
     // initializing up points
-    for(t = 0; t < Nt; t++)
-    {
-        for (int i = 0; i < Nx; i++)
-            for (int j = 0; j < Ny; j++)
-                T[t][i][j][Nz - 1] = 40;
-    }
+    for (int i = 0; i < Nx; i++)
+        for (int j = 0; j < Ny; j++)
+        {
+            T[0][i][j][Nz - 1] = 40;
+            T[1][i][j][Nz - 1] = 40;
+        }
     // initializing down points
     for (int i = 0; i < Nx; i++)
         T[0][i][0][0] = 100 - (75.0 / (Nx - 1.0))*i;
@@ -45,20 +43,23 @@ void Initalizing()
             T[0][i][0][j] = 100 - (75.0 / (Nx - 1.0))*i;
             T[0][i][Ny - 1][j] = 100 - (75.0 / (Nx - 1.0))*i;
         }
-    for (t = 0; t < Nt; t++)
-    {
-        // initializing left points
-        for (int i = 0; i < Ny; i++)
-            for (int j = 0; j < Nz; j++)
-                T[t][0][i][j] = 100;
-        // initializing right points
-        for (int i = 0; i < Ny; i++)
-            for (int j = 0; j < Nz; j++)
-                T[t][Nx - 1][i][j] = 20;
-    }
+    // initializing left points
+    for (int i = 0; i < Ny; i++)
+        for (int j = 0; j < Nz; j++)
+        {
+            T[0][0][i][j] = 100;
+            T[1][0][i][j] = 100;
+        }
+    // initializing right points
+    for (int i = 0; i < Ny; i++)
+        for (int j = 0; j < Nz; j++)
+        {
+            T[0][Nx - 1][i][j] = 20;
+            T[1][Nx - 1][i][j] = 20;
+        }
 }
 
-void updateState(int t)
+void updateState_1(int t)
 {
     // update interior points
     // printf("start (0,0,0) = %lf (0,0,1) = %lf (0,1,1) = %lf (0,1,0) = %lf (1,0,0) = %lf (1,1,0) = %lf (1,1,1) = %lf (1,0,1) = %lf\n",T[t][0][0][0],T[t][0][0][1],T[t][0][1][1],T[t][0][1][0],T[t][1][0][0],T[t][1][1][0],T[t][1][1][1],T[t][1][0][1]);
@@ -87,7 +88,14 @@ void updateState(int t)
         T[t + 1][i][0][0] = T[t][i][0][0] + s * (T[t][i + 1][0][0] - 2 * T[t][i][0][0] + T[t][i - 1][0][0]) + s * (T[t][i][0][0] - 2 * T[t][i][1][0] + T[t][i][2][0]) + s * (T[t][i][0][0] - 2 * T[t][i][0][1] + T[t][i][0][2]);
     for (int i = 1; i <= Nx - 2; i++)
         T[t + 1][i][Ny - 1][0] = T[t][i][Ny - 1][0] + s * (T[t][i + 1][Ny - 1][0] - 2 * T[t][i][Ny - 1][0] + T[t][i - 1][Ny - 1][0]) + s * (T[t][i][Ny - 1][0] - 2 * T[t][i][Ny - 2][0] + T[t][i][Ny - 3][0]) + s * (T[t][i][Ny - 1][0] - 2 * T[t][i][Ny - 1][1] + T[t][i][Ny - 1][2]);
+}
 
+void updateState_2()
+{
+    for (int i = 0; i < Nx; i++)
+        for (int j = 0; j < Ny; j++)
+            for (int k = 0; k < Nz; k++)
+                T[0][i][j][k] = T[1][i][j][k];
 }
 
 double diffence(int t)
@@ -96,7 +104,7 @@ double diffence(int t)
     for (int i = 0; i < Nx; i++)
         for (int j = 0; j < Ny; j++)
             for (int k = 0; k < Nz; k++)
-                sum = sum + T[t][i][j][k] - T[t - 1][i][j][k];
+                sum = sum + T[t + 1][i][j][k] - T[t][i][j][k];
     return sum/(Nx*Ny*Nz);
 }
 
@@ -123,14 +131,17 @@ int main()
     int check_interval = 20;
     for (int t = 1; t < Nt; ++t)
     {
+        updateState_1(0);
+        
         if (t % check_interval == 0)
         {
-            double diff = diffence(t);
-            double avg_t = average_temp(t);
+            double diff = diffence(0);
+            double avg_t = average_temp(0);
             printf("t = %d, diff = %lf, avg_t = %lf\n", t, diff, avg_t);
-            printf("%lf\n", T[t][1][1][1]);
+            //            printf("%lf\n", T[0][1][1][1]);
         }
-        updateState(t);
+        
+        updateState_2();
     }
     
     return 0;
