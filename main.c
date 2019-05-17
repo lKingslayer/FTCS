@@ -10,7 +10,7 @@
 
 const double L = 100, W = 10, H = 5;
 const double k = 0.1;
-const double dx = 0.1, dy = 0.1, dz = 0.1, dt = 0.001;
+const double dx = 0.1, dy = 0.1, dz = 0.1, dt = 0.00001;
 const double max_t = 2;
 const double s = (k * dt)/(dx*dx);
 const int Nx = L / dx + 1, Ny = W / dy + 1, Nz = H / dz + 1, Nt = max_t / dt + 1;
@@ -178,7 +178,7 @@ int main()
     printf("avg_t %lf\n", avg_t);
     printf("Simualtingf.\n");
     int check_interval = 100;
-    int snapshot_interval = 100; 
+    int snapshot_interval = 100000; 
     for (int t = 1; t < Nt; ++t)
     {
         updateState_1(0);
@@ -189,9 +189,17 @@ int main()
 //            double diff = diffence(0);
             double avg_t = average_temp(0);
             printf("t = %d, avg_t = %lf\n", t, avg_t);
-            printf("%lf\n", T[0][1][1][1]);
 //            printf("(1,0,Nz-1) = %lf\n",T[1][1][0][Nz-1]);
 //            printf("(0,1,1)_final = %lf\n",T[0][0][1][1]);
+            printf("(1, 1, Nz - 2) = %lf\n", T[0][1][1][Nz - 2]);
+
+            printf("(1, 1, Nz - 1) = %lf\n", T[0][1][1][Nz - 1]);
+            printf("(1, 1, Nz - 3) = %lf\n", T[0][1][1][Nz - 3]);           
+            printf("(1, 0, Nz - 2) = %lf\n", T[0][1][0][Nz - 2]);
+            printf("(1, 2, Nz - 2) = %lf\n", T[0][1][2][Nz - 2]);
+            printf("(0, 1, Nz - 2) = %lf\n", T[0][0][1][Nz - 2]);
+            printf("(2, 1, Nz - 2) = %lf\n", T[0][2][1][Nz - 2]);
+            printf("\n\n\n");
         }
 //        updateState_2();
 //        printf("(0,1,1)_final = %lf\n",T[0][0][1][1]);
