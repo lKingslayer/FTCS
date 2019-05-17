@@ -6,6 +6,7 @@
 //
 
 #include <stdio.h>
+#include <stdlib.h> 
 
 const double L = 100, W = 10, H = 5;
 const double k = 0.1;
@@ -144,17 +145,40 @@ double average_temp(int t)
     return sum / (Nx * Ny * Nz);
 }
 
+void snapshot(char *filename) {
+    // take a snapshot of t = 0 image 
+
+    FILE *fp;
+
+    fp = fopen(filename, "w+");
+
+    // write sequentially 
+    for (int i = 0; i < Nx; i++)
+        for (int j = 0; j < Ny; j++)
+            for (int k = 0; k < Nz; k++)
+                fprintf(fp, "%.10f, ", T[0][i][j][k]);
+
+    fclose(fp);
+}
+
 int main()
 {
     printf("%d %d %d %d\n",Nt,Nx,Ny,Nz);
     
     printf("Initalizing.\n");
     Initalizing();
+
+    // take snap shot after initalization 
+    char *init_temp_filename = "./snapshot/0.txt";
+    printf("saving init temp to file %s\n", init_temp_filename);
+    snapshot(init_temp_filename);
+
     double avg_t = average_temp(0);
     printf("%lf\n", T[0][0][1][1]);
     printf("avg_t %lf\n", avg_t);
     printf("Simualtingf.\n");
     int check_interval = 100;
+    int snapshot_interval = 100; 
     for (int t = 1; t < Nt; ++t)
     {
         updateState_1(0);
@@ -171,6 +195,18 @@ int main()
         }
 //        updateState_2();
 //        printf("(0,1,1)_final = %lf\n",T[0][0][1][1]);
+
+        // take a snapshot
+        if (t % snapshot_interval == 0)
+        {
+            // prepare filename 
+            const int len_filename = 20; 
+            char *filename = (char*)malloc(len_filename * sizeof(char));
+            sprintf(filename, "./snapshot/%d.txt", t);
+
+            printf("taking snapshot at time = %d\n", t); 
+            snapshot(filename); 
+        }
     }
     
     return 0;
