@@ -8,9 +8,9 @@
 #include <stdio.h>
 
 const double L = 100, W = 10, H = 5;
-const double k = 0.1;
+const double k = 0.3;
 const double dx = 0.05, dy = 0.05, dz = 0.05, dt = 0.001;
-const double max_t = 50;
+const double max_t = 500;
 const double s = (k * dt)/(dx*dx);
 const int Nx = L / dx + 1, Ny = W / dy + 1, Nz = H / dz + 1, Nt = max_t / dt + 1;
 double T[2][Nx][Ny][Nz];
@@ -23,6 +23,7 @@ void Initalizing()
         for (int j = 0; j < Ny; j++)
             for (int k = 0; k < Nz; k++)
                 T[0][i][j][k] = T_start;
+    
     // initializing up points
     for (int i = 1; i < Nx - 1; i++)
         for (int j = 1; j < Ny - 1; j++)
@@ -35,13 +36,11 @@ void Initalizing()
     for (int i = 1; i < Nx - 1; i++)
     {
         T[0][i][0][0] = 100.0 - (75.0 / (Nx - 1.0))*i;
-//        T[1][i][0][0] = 100.0 - (75.0 / (Nx - 1.0))*i;
     }
     for (int i = 1; i < Nx - 1; i++)
         for (int j = 1; j < Ny - 1; j++)
         {
             T[0][i][j][0] = T[0][i][0][0] * (1.0 - (0.8 / (Ny - 1.0))*j);
-//            T[1][i][j][0] = T[0][i][0][0] * (1.0 - (0.8 / (Ny - 1.0))*j);
         }
     
     // initializing front points
@@ -49,7 +48,6 @@ void Initalizing()
         for (int j = 1; j < Nz; j++)
         {
             T[0][i][0][j] = 100.0 - (75.0 / (Nx - 1.0))*i;
-//            T[1][i][0][j] = 100.0 - (75.0 / (Nx - 1.0))*i;
         }
     
     //initializing back points
@@ -57,7 +55,6 @@ void Initalizing()
         for (int j = 0; j < Nz; j++)
         {
             T[0][i][Ny - 1][j] = 100.0 - (75.0 / (Nx - 1.0))*i;
-//            T[1][i][Ny - 1][j] = 100.0 - (75.0 / (Nx - 1.0))*i;
         }
     
     // initializing left points
@@ -80,12 +77,11 @@ void Initalizing()
 void updateState_1(int t)
 {
     // update interior points
-    // printf("start (0,0,0) = %lf (0,0,1) = %lf (0,1,1) = %lf (0,1,0) = %lf (1,0,0) = %lf (1,1,0) = %lf (1,1,1) = %lf (1,0,1) = %lf\n",T[t][0][0][0],T[t][0][0][1],T[t][0][1][1],T[t][0][1][0],T[t][1][0][0],T[t][1][1][0],T[t][1][1][1],T[t][1][0][1]);
     for (int i = 1; i <= Nx - 2; i++)
         for (int j = 1; j <= Ny - 2; j++)
             for (int k = 1; k <= Nz - 2; k++)
                 T[t + 1][i][j][k] = T[t][i][j][k] + s * (T[t][i + 1][j][k] - 2 * T[t][i][j][k] + T[t][i - 1][j][k]) + s * (T[t][i][j + 1][k] - 2 * T[t][i][j][k] + T[t][i][j - 1][k]) + s * (T[t][i][j][k + 1] - 2 * T[t][i][j][k] + T[t][i][j][k - 1]);
-//     printf("(0,0,0) = %lf (0,0,1) = %lf (0,1,1) = %lf (0,1,0) = %lf (1,0,0) = %lf (1,1,0) = %lf (1,1,1) = %lf (1,0,1) = %lf\n",T[][0][0][0],T[t][0][0][1],T[t][0][1][1],T[t][0][1][0],T[t][1][0][0],T[t][1][1][0],T[t][1][1][1],T[t][1][0][1]);
+    
     // update front points
     for (int i = 1; i <= Nx - 2; i++)
             for (int k = 1; k <= Nz - 2; k++)
@@ -113,15 +109,6 @@ void updateState_1(int t)
 //    for (int i = 1; i <= Nx - 2; i++)
 //        T[t + 1][i][Ny - 1][0] = T[t][i][Ny - 1][0] + s * (T[t][i + 1][Ny - 1][0] - 2 * T[t][i][Ny - 1][0] + T[t][i - 1][Ny - 1][0]) + s * (T[t][i][Ny - 1][0] - 2 * T[t][i][Ny - 2][0] + T[t][i][Ny - 3][0]) + s * (T[t][i][Ny - 1][0] - 2 * T[t][i][Ny - 1][1] + T[t][i][Ny - 1][2]);
     
-//    for (int i = 1; i < Nx - 1; i++)
-//        for (int j = 1; j < Ny - 1; j++)
-//            T[1][i][j][Nz - 1] = 40.0;
-//    for (int i = 0; i < Ny; i++)
-//        for (int j = 0; j < Nz; j++)
-//            T[1][0][i][j] = 100.0;
-//    for (int i = 0; i < Ny; i++)
-//        for (int j = 0; j < Nz; j++)
-//            T[1][Nx - 1][i][j] = 20.0;
 }
 
 void updateState_2()
@@ -169,29 +156,43 @@ int main()
     fprintf(fp, "Simualtingf.\n");
     fflush(fp);
     
-    int check_interval = 20;
+    int check_interval = 50;
     for (int t = 1; t < Nt; ++t)
     {
         updateState_1(0);
 //        printf("%lf\n", T[1][1][1][1]);
+        if (t > 50000)
+        {
+            fprintf(fp,"t = %d : \n",t);
+            fflush(fp);
+            for (int i = 0; i < Nx; i++)
+            for (int j = 0; j < Ny; j++)
+                for (int k = 0; k < Nz; k++)
+                {
+                        fprintf(fp,"(%d,%d,%d) = %lf\n",i,j,k,T[1][i][j][k]);
+                        fflush(fp);
+                }
+        }
         if (t % check_interval == 0)
         {
             double diff = diffence(0);
             double avg_t = average_temp(1);
     
-            printf("t = %d, difference = %lf, avg_t = %lf\n", t, diff, avg_t);
+            fprintf(fp,"t = %d, difference = %lf, avg_t = %lf\n", t, diff, avg_t);
             fflush(fp);
+            printf("t = %d, difference = %lf, avg_t = %lf\n", t, diff, avg_t);
 //            printf("%lf\n", T[0][1][0][1]);
 //            printf("(1,0,Nz-1) = %lf\n",T[1][1][0][Nz-1]);
 //            printf("(0,1,1)_final = %lf\n",T[0][0][1][1]);
-            printf("(1, 1, Nz - 2) = %lf\n", T[0][1][1][Nz - 2]);
+//            printf("(1, 1, Nz - 2) = %lf\n", T[0][1][1][Nz - 2]);
             
-            printf("(1, 1, Nz - 1) = %lf\n", T[0][1][1][Nz - 1]);
-            printf("(1, 1, Nz - 3) = %lf\n", T[0][1][1][Nz - 3]);
-            printf("(1, 0, Nz - 2) = %lf\n", T[0][1][0][Nz - 2]);
-            printf("(1, 2, Nz - 2) = %lf\n", T[0][1][2][Nz - 2]);
-            printf("(0, 1, Nz - 2) = %lf\n", T[0][0][1][Nz - 2]);
-            printf("(2, 1, Nz - 2) = %lf\n", T[0][2][1][Nz - 2]);
+//            printf("(1, 1, Nz - 1) = %lf\n", T[0][1][1][Nz - 1]);
+//            printf("(1, 1, Nz - 3) = %lf\n", T[0][1][1][Nz - 3]);
+
+//            printf("(1, 0, Nz - 2) = %lf\n", T[0][1][0][Nz - 2]);
+//            printf("(1, 2, Nz - 2) = %lf\n", T[0][1][2][Nz - 2]);
+//            printf("(0, 1, Nz - 2) = %lf\n", T[0][0][1][Nz - 2]);
+//            printf("(2, 1, Nz - 2) = %lf\n", T[0][2][1][Nz - 2]);
             printf("\n\n\n");
         }
         updateState_2();
