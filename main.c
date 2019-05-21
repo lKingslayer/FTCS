@@ -161,23 +161,22 @@ int main()
     {
         updateState_1(0);
 //        printf("%lf\n", T[1][1][1][1]);
-        if (t > 50000)
+        if (t > 35000)
         {
-            fprintf(fp,"t = %d : \n",t);
+            fprintf(fp,"t = %d :\n",t);
             fflush(fp);
             for (int i = 0; i < Nx; i++)
-            for (int j = 0; j < Ny; j++)
-                for (int k = 0; k < Nz; k++)
-                {
+                for (int j = 0; j < Ny; j++)
+                    for (int k = 0; k < Nz; k++)
+                    {
                         fprintf(fp,"(%d,%d,%d) = %lf\n",i,j,k,T[1][i][j][k]);
                         fflush(fp);
-                }
+                    }
         }
         if (t % check_interval == 0)
         {
             double diff = diffence(0);
             double avg_t = average_temp(1);
-    
             fprintf(fp,"t = %d, difference = %lf, avg_t = %lf\n", t, diff, avg_t);
             fflush(fp);
             printf("t = %d, difference = %lf, avg_t = %lf\n", t, diff, avg_t);
