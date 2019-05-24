@@ -139,6 +139,21 @@ double average_temp(int t)
     return sum / (Nx * Ny * Nz);
 }
 
+void snap_shot(int t) {
+    char filename[50]; 
+    sprintf(filename, "./snapshot_%d.txt", t);
+    FILE *snapshot_fp;
+    snapshot_fp = fopen(filename, "w");  
+    fprintf(snapshot_fp,"t = %d :\n",t);
+    for (int i = 0; i < Nx; i++)
+        for (int j = 0; j < Ny; j++)
+            for (int k = 0; k < Nz; k++) {
+                fprintf(snapshot_fp,"(%d,%d,%d) = %lf\n", i, j, k, T[1][i][j][k]);
+            }
+    fflush(snapshot_fp);
+    fclose(snapshot_fp);  
+}
+
 int main()
 {
     FILE * fp;
@@ -154,13 +169,15 @@ int main()
     fprintf(fp, "%lf\n", T[0][0][1][1]);
     fprintf(fp, "avg_t %lf\n", avg_t);
     fprintf(fp, "Simualtingf.\n");
-    fflush(fp);
     
     int check_interval = 50;
+    int save_interval = 50000;
+    int start_snapshot = 0;
     for (int t = 1; t < Nt; ++t)
     {
         updateState_1(0);
 //        printf("%lf\n", T[1][1][1][1]);
+<<<<<<< HEAD
 //        if (t > 35000)
 //        {
 //            fprintf(fp,"t = %d :\n",t);
@@ -173,12 +190,18 @@ int main()
 //                        fflush(fp);
 //                    }
 //        }
+=======
+        if ((t > start_snapshot) && (t % save_interval == 0))
+        {
+            fprintf(fp, "Snapshooting t = %d\n", t); 
+            snap_shot(t); 
+        }
+>>>>>>> a0bb77f90207b6599d977afec9384edb6c6fe121
         if (t % check_interval == 0)
         {
             double diff = diffence(0);
             double avg_t = average_temp(1);
             fprintf(fp,"t = %d, difference = %lf, avg_t = %lf\n", t, diff, avg_t);
-            fflush(fp);
             printf("t = %d, difference = %lf, avg_t = %lf\n", t, diff, avg_t);
 //            printf("%lf\n", T[0][1][0][1]);
 //            printf("(1,0,Nz-1) = %lf\n",T[1][1][0][Nz-1]);
@@ -192,11 +215,13 @@ int main()
 //            printf("(1, 2, Nz - 2) = %lf\n", T[0][1][2][Nz - 2]);
 //            printf("(0, 1, Nz - 2) = %lf\n", T[0][0][1][Nz - 2]);
 //            printf("(2, 1, Nz - 2) = %lf\n", T[0][2][1][Nz - 2]);
-            printf("\n\n\n");
+//            printf("\n\n\n");
         }
         updateState_2();
 //        updateState_2();
 //        printf("(0,1,1)_final = %lf\n",T[0][0][1][1]);
+        // flush once in a loop is enough 
+        fflush(fp); 
     }
     fclose (fp);
     return 0;
