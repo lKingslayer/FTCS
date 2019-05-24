@@ -9,13 +9,13 @@
 
 const double L = 100, W = 10, H = 5;
 const double k = 0.3;
-const double dx = 0.05, dy = 0.05, dz = 0.05, dt = 0.001;
+const double dx = 0.5, dy = 0.5, dz = 0.5, dt = 0.01;
 const double max_t = 500;
 const double s = (k * dt)/(dx*dx);
 const int Nx = L / dx + 1, Ny = W / dy + 1, Nz = H / dz + 1, Nt = max_t / dt + 1;
 double T[2][Nx][Ny][Nz];
 
-double T_start = 0;
+double T_start = 30;
 
 void Initalizing()
 {
@@ -161,18 +161,18 @@ int main()
     {
         updateState_1(0);
 //        printf("%lf\n", T[1][1][1][1]);
-        if (t > 35000)
-        {
-            fprintf(fp,"t = %d :\n",t);
-            fflush(fp);
-            for (int i = 0; i < Nx; i++)
-                for (int j = 0; j < Ny; j++)
-                    for (int k = 0; k < Nz; k++)
-                    {
-                        fprintf(fp,"(%d,%d,%d) = %lf\n",i,j,k,T[1][i][j][k]);
-                        fflush(fp);
-                    }
-        }
+//        if (t > 35000)
+//        {
+//            fprintf(fp,"t = %d :\n",t);
+//            fflush(fp);
+//            for (int i = 0; i < Nx; i++)
+//                for (int j = 0; j < Ny; j++)
+//                    for (int k = 0; k < Nz; k++)
+//                    {
+//                        fprintf(fp,"(%d,%d,%d) = %lf\n",i,j,k,T[1][i][j][k]);
+//                        fflush(fp);
+//                    }
+//        }
         if (t % check_interval == 0)
         {
             double diff = diffence(0);
