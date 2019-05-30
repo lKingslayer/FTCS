@@ -14,6 +14,12 @@
 const int bytesPerPixel = 3; /// red, green, blue
 const int fileHeaderSize = 14;
 const int infoHeaderSize = 40;
+const int height = 101;
+const int width = 201;
+
+static FILE* fpRead;
+
+
 /*
  * int 4 byte 
  * unsighed short 1 byte = char 1 byte, 0-255=2^8
@@ -23,6 +29,8 @@ const int infoHeaderSize = 40;
 void generateBitmapImage(unsigned char *image, int height, int width, char* imageFileName);
 unsigned char* createBitmapFileHeader(int height, int width, int paddingSize);
 unsigned char* createBitmapInfoHeader(int height, int width);
+
+
 
 void generateBitmapImage(unsigned char *image, int height, int width, char* imageFileName){
     
@@ -97,13 +105,44 @@ unsigned char* createBitmapInfoHeader(int height, int width){
     return infoHeader;
 }
 
-
-
 int get_max(int a, int b) {
-    if (a > b) 
+    if (a > b)
         return a;
     return b;
 }
+
+void generate_image(char* imageFileName)
+{
+    unsigned char image[height][width][bytesPerPixel];
+    int m, n;
+    for(m = 0; m < height; m++){
+        for(n = 0; n < width; n++){
+            double r,g,b;
+            //            double temp = (n * 100) / (double)width_prime;
+            double temp;
+            char str[10];
+            double max = 100, min = 0;
+            fgets(str,15,fpRead);
+            str[strlen(str)-1]='\0';
+            //            printf("%s\n",str);
+            temp = atof(str);
+            if (m == 0 && n == 0)
+                printf("%lf\n",temp);
+//            printf("%lf\n",temp);
+            double ratio = 2 * (temp - min) / (max - min);
+            b = get_max(0, 255 * (1 - ratio));
+            r = get_max(0, 255 * (ratio - 1));
+            g = 255 - b - r;
+            image[m][n][2] = (unsigned char)(r); ///red
+            image[m][n][1] = (unsigned char)(g); ///green
+            image[m][n][0] = (unsigned char)(b); ///blue
+        }
+    }
+    generateBitmapImage((unsigned char *)image, height, width
+                        , imageFileName);
+}
+
+
 
 
 void temp2rgb(double value, double r, double g, double b) {
@@ -120,13 +159,21 @@ int main()
 	clock_t start, stop;
 
 	start = clock();											// Note the start time for profiling purposes.
-    int height_prime = 101;
-    int width_prime = 201;
-    unsigned char image[height_prime][width_prime][bytesPerPixel];
-    char* imageFileName = "./images/bitmapImage.bmp";
-    printf("width: %d\n",width_prime);
-    printf("height: %d\n",height_prime);
-    FILE *fpRead=fopen("snapshot_60000.txt","r");
+//    unsigned char image[height][width][bytesPerPixel];
+    char* imageFileName_0 = "./images/bitmapImage_0.bmp";
+    char* imageFileName_1 = "./images/bitmapImage_1.bmp";
+    char* imageFileName_2 = "./images/bitmapImage_2.bmp";
+    char* imageFileName_3 = "./images/bitmapImage_3.bmp";
+    char* imageFileName_4 = "./images/bitmapImage_4.bmp";
+    char* imageFileName_5 = "./images/bitmapImage_5.bmp";
+    char* imageFileName_6 = "./images/bitmapImage_6.bmp";
+    char* imageFileName_7 = "./images/bitmapImage_7.bmp";
+    char* imageFileName_8 = "./images/bitmapImage_8.bmp";
+    char* imageFileName_9 = "./images/bitmapImage_9.bmp";
+    char* imageFileName_10 = "./images/bitmapImage_10.bmp";
+    printf("width: %d\n",width);
+    printf("height: %d\n",height);
+    fpRead = fopen("snapshot_60000.txt","r");
     if (fpRead == NULL)
     {
         puts("cannot open");
@@ -134,35 +181,21 @@ int main()
     }
     char string_time[20];
     fgets(string_time,15,fpRead);
-    string_time[strlen(string_time)-1]='\0';
-    printf("%s\n",string_time);
-
-    int m, n;
-    for(m=0; m<height_prime; m++){
-        for(n=0; n<width_prime; n++){
-            double r,g,b;
-//            double temp = (n * 100) / (double)width_prime;
-            double temp;
-            char str[10];
-            double max = 100, min = 0;
-            fgets(str,15,fpRead);
-            str[strlen(str)-1]='\0';
-//            printf("%s\n",str);
-            temp = atof(str);
-            printf("%lf\n",temp);
-            double ratio = 2 * (temp - min) / (max - min);
-            b = get_max(0, 255 * (1 - ratio));
-            r = get_max(0, 255 * (ratio - 1));
-            g = 255 - b - r;
-            image[m][n][2] = (unsigned char)(r); ///red
-            image[m][n][1] = (unsigned char)(g); ///green
-            image[m][n][0] = (unsigned char)(b); ///blue
-        }
-    }
-    fclose(fpRead);
-    generateBitmapImage((unsigned char *)image, height_prime, width_prime, imageFileName);
-    printf("Image generated!!");
+    generate_image(imageFileName_0);
+    generate_image(imageFileName_1);
+    generate_image(imageFileName_2);
+    generate_image(imageFileName_3);
+    generate_image(imageFileName_4);
+    generate_image(imageFileName_5);
+    generate_image(imageFileName_6);
+    generate_image(imageFileName_7);
+    generate_image(imageFileName_8);
+    generate_image(imageFileName_9);
+    generate_image(imageFileName_10);
     
+    
+    fclose(fpRead);
+    printf("Image generated!!");
     
     
 //    FILE *fIn = fopen("./images/bitmapImage.bmp","r");                    //Input File name
