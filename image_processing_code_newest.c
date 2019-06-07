@@ -14,7 +14,7 @@
 const int bytesPerPixel = 3; /// red, green, blue
 const int fileHeaderSize = 14;
 const int infoHeaderSize = 40;
-const int height = 11;
+const int height = 26;
 const int width = 101;
 
 static FILE* fpRead;
