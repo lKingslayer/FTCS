@@ -6,7 +6,7 @@
 * @date 2018-01-10
 */
 #include <stdio.h>
-#include <time.h>
+//#include <time.h>
 #include <string.h>
 #include <stdlib.h>
 
@@ -14,8 +14,8 @@
 const int bytesPerPixel = 3; /// red, green, blue
 const int fileHeaderSize = 14;
 const int infoHeaderSize = 40;
-const int height = 101;
-const int width = 201;
+const int height = 11;
+const int width = 101;
 
 static FILE* fpRead;
 
@@ -46,7 +46,8 @@ void generateBitmapImage(unsigned char *image, int height, int width, char* imag
     fwrite(infoHeader, 1, infoHeaderSize, imageFile);
     
     int i;
-    for(i=0; i<height; i++){
+    for(i=0; i<height; i++)
+    {
         fwrite(image+(i*width*bytesPerPixel), bytesPerPixel, width, imageFile);
         fwrite(padding, 1, paddingSize, imageFile);
     }
@@ -64,12 +65,12 @@ unsigned char* createBitmapFileHeader(int height, int width, int paddingSize){
         0,0,0,0, /// start of pixel array
     };
     
-    fileHeader[ 0] = (unsigned char)('B');
-    fileHeader[ 1] = (unsigned char)('M');
-    fileHeader[ 2] = (unsigned char)(fileSize    );
-    fileHeader[ 3] = (unsigned char)(fileSize>> 8);
-    fileHeader[ 4] = (unsigned char)(fileSize>>16);
-    fileHeader[ 5] = (unsigned char)(fileSize>>24);
+    fileHeader[0] = (unsigned char)('B');
+    fileHeader[1] = (unsigned char)('M');
+    fileHeader[2] = (unsigned char)(fileSize);
+    fileHeader[3] = (unsigned char)(fileSize >> 8);
+    fileHeader[4] = (unsigned char)(fileSize >> 16);
+    fileHeader[5] = (unsigned char)(fileSize >> 24);
     fileHeader[10] = (unsigned char)(fileHeaderSize + infoHeaderSize);
     
     return fileHeader;
@@ -90,15 +91,15 @@ unsigned char* createBitmapInfoHeader(int height, int width){
         0,0,0,0, /// important color count
     };
     
-    infoHeader[ 0] = (unsigned char)(infoHeaderSize);
-    infoHeader[ 4] = (unsigned char)(width    );
-    infoHeader[ 5] = (unsigned char)(width>> 8);
-    infoHeader[ 6] = (unsigned char)(width>>16);
-    infoHeader[ 7] = (unsigned char)(width>>24);
-    infoHeader[ 8] = (unsigned char)(height    );
-    infoHeader[ 9] = (unsigned char)(height>> 8);
-    infoHeader[10] = (unsigned char)(height>>16);
-    infoHeader[11] = (unsigned char)(height>>24);
+    infoHeader[0] = (unsigned char)(infoHeaderSize);
+    infoHeader[4] = (unsigned char)(width);
+    infoHeader[5] = (unsigned char)(width >> 8);
+    infoHeader[6] = (unsigned char)(width >> 16);
+    infoHeader[7] = (unsigned char)(width >> 24);
+    infoHeader[8] = (unsigned char)(height);
+    infoHeader[9] = (unsigned char)(height >> 8);
+    infoHeader[10] = (unsigned char)(height >> 16);
+    infoHeader[11] = (unsigned char)(height >> 24);
     infoHeader[12] = (unsigned char)(1);
     infoHeader[14] = (unsigned char)(bytesPerPixel*8);
     
@@ -145,32 +146,32 @@ void generate_image(char* imageFileName)
 
 
 
-void temp2rgb(double value, double r, double g, double b) {
-    double max = 100, min = 0;
-    double ratio = 2 * (value - min) / (max - min);
-    b = get_max(0, 255 * (1 - ratio));
-    r = get_max(0, 255 * (ratio - 1));
-    g = 255 - b - r;
-    return;
-}
+//void temp2rgb(double value, double r, double g, double b) {
+//    double max = 100, min = 0;
+//    double ratio = 2 * (value - min) / (max - min);
+//    b = get_max(0, 255 * (1 - ratio));
+//    r = get_max(0, 255 * (ratio - 1));
+//    g = 255 - b - r;
+//    return;
+//}
 
 int main()
 {
-	clock_t start, stop;
+//    clock_t start, stop;
 
-	start = clock();											// Note the start time for profiling purposes.
+//    start = clock();                                            // Note the start time for profiling purposes.
 //    unsigned char image[height][width][bytesPerPixel];
-    char* imageFileName_0 = "./images/bitmapImage_0.bmp";
-    char* imageFileName_1 = "./images/bitmapImage_1.bmp";
-    char* imageFileName_2 = "./images/bitmapImage_2.bmp";
-    char* imageFileName_3 = "./images/bitmapImage_3.bmp";
-    char* imageFileName_4 = "./images/bitmapImage_4.bmp";
-    char* imageFileName_5 = "./images/bitmapImage_5.bmp";
-    char* imageFileName_6 = "./images/bitmapImage_6.bmp";
-    char* imageFileName_7 = "./images/bitmapImage_7.bmp";
-    char* imageFileName_8 = "./images/bitmapImage_8.bmp";
-    char* imageFileName_9 = "./images/bitmapImage_9.bmp";
-    char* imageFileName_10 = "./images/bitmapImage_10.bmp";
+//    char* imageFileName_0 = "./images/bitmapImage_0.bmp";
+//    char* imageFileName_1 = "./images/bitmapImage_1.bmp";
+//    char* imageFileName_2 = "./images/bitmapImage_2.bmp";
+//    char* imageFileName_3 = "./images/bitmapImage_3.bmp";
+//    char* imageFileName_4 = "./images/bitmapImage_4.bmp";
+//    char* imageFileName_5 = "./images/bitmapImage_5.bmp";
+//    char* imageFileName_6 = "./images/bitmapImage_6.bmp";
+//    char* imageFileName_7 = "./images/bitmapImage_7.bmp";
+//    char* imageFileName_8 = "./images/bitmapImage_8.bmp";
+//    char* imageFileName_9 = "./images/bitmapImage_9.bmp";
+//    char* imageFileName_10 = "./images/bitmapImage_10.bmp";
     printf("width: %d\n",width);
     printf("height: %d\n",height);
     fpRead = fopen("snapshot_60000.txt","r");
@@ -181,17 +182,24 @@ int main()
     }
     char string_time[20];
     fgets(string_time,15,fpRead);
-    generate_image(imageFileName_0);
-    generate_image(imageFileName_1);
-    generate_image(imageFileName_2);
-    generate_image(imageFileName_3);
-    generate_image(imageFileName_4);
-    generate_image(imageFileName_5);
-    generate_image(imageFileName_6);
-    generate_image(imageFileName_7);
-    generate_image(imageFileName_8);
-    generate_image(imageFileName_9);
-    generate_image(imageFileName_10);
+//    generate_image(imageFileName_0);
+//    generate_image(imageFileName_1);
+//    generate_image(imageFileName_2);
+//    generate_image(imageFileName_3);
+//    generate_image(imageFileName_4);
+//    generate_image(imageFileName_5);
+//    generate_image(imageFileName_6);
+//    generate_image(imageFileName_7);
+//    generate_image(imageFileName_8);
+//    generate_image(imageFileName_9);
+//    generate_image(imageFileName_10);
+    
+    char image_name[100];
+    for (int n_image = 0; n_image < 201; ++n_image) {
+        sprintf(image_name, "./images/bitmapImage_%d.bmp", n_image);
+        printf("Generating image: %s\n", image_name);
+        generate_image(image_name);
+    }
     
     
     fclose(fpRead);
@@ -278,8 +286,8 @@ int main()
 //    fclose(fOut);
 //    fclose(fIn);
 
-	stop = clock();
-	printf("\nCLOCKS_PER_SEC = %ld\n",stop-start); //1000000
-	printf("%lf ms\n",((double)(stop-start) * 1000.0)/CLOCKS_PER_SEC );
+//    stop = clock();
+//    printf("\nCLOCKS_PER_SEC = %ld\n",stop-start); //1000000
+//    printf("%lf ms\n",((double)(stop-start) * 1000.0)/CLOCKS_PER_SEC );
 	return 0;
 }
